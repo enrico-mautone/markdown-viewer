@@ -6,6 +6,11 @@ markdownviewer/
   CODEMAP.md                Questo file
   requirements.txt          Dipendenze runtime: tkinterweb, markdown
   requirements-dev.txt      requirements.txt + pytest
+  requirements-build.txt    requirements.txt + pyinstaller
+  build.ps1                 Costruisce MarkdownViewer.exe (venv temporanea +
+                             PyInstaller --onefile --windowed) e lo copia
+                             nella cartella da cui si lancia lo script —
+                             vedi docs/build-eseguibile.md
   markdownviewer/
     __init__.py
     app.py                  Entry point applicativo: MarkdownViewerApp
@@ -75,6 +80,7 @@ markdownviewer/
 - Vedi `docs/design-markdown-viewer.md` per la spec di design e
   `docs/superpowers/plans/2026-09-24-markdown-viewer.md` per il piano di
   implementazione.
+- Vedi `docs/build-eseguibile.md` per come costruire l'eseguibile Windows.
 - La revisione finale (subagent fresco su tutto il branch, vedi ledger del
   piano) ha trovato e fatto correggere: immagini relative mai risolte su
   Windows (più il check di `manual_test/verify_tab.py` che lo dichiarava

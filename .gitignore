@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Eseguibile costruito da build.ps1 (copiato nella cartella da cui si lancia lo script)
+MarkdownViewer.exe
