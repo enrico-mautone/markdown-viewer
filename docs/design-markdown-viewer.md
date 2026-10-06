@@ -48,6 +48,10 @@ Vedi [[CODEMAP]] per il dettaglio directory.
 - **Ricarica manuale**: il pulsante "Ricarica" sotto il menu (o F5, Ctrl+R,
   File → Ricarica) rilegge dal disco il file della tab corrente senza
   riaprirlo; vedi [[ricarica-documento]].
+- **File recenti**: il menu "Recenti" elenca gli ultimi 10 file aperti (elenco
+  circolare, il piu' recente in alto) e li riapre con un click. L'elenco si
+  conserva in `%APPDATA%\MarkdownViewer\recent.json`, l'unico file che l'app
+  scrive — mai i `.md`; vedi [[file-recenti]].
 - **Link esterni**: click su un link `http(s)://` apre il browser di sistema
   via `webbrowser.open()`, non naviga dentro l'app.
 - **Errori**: file non trovato, non leggibile (permessi) o con encoding non

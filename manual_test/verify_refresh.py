@@ -6,6 +6,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from markdownviewer.app import MarkdownViewerApp
+import tempfile as _tempfile
+
+RECENT_PATH = Path(_tempfile.mkdtemp()) / "recent.json"
 
 
 def build_doc(marker: str) -> str:
@@ -24,7 +27,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     root = tk.Tk()
     root.geometry("700x400")
-    app = MarkdownViewerApp(root)
+    app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 
     # No open tab: pressing refresh must be a harmless no-op
     app._refresh_button.invoke()
