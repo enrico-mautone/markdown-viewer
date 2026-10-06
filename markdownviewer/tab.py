@@ -40,3 +40,11 @@ class MarkdownTab(HtmlFrame):
     def _handle_link_click(self, url: str):
         if url.startswith("http://") or url.startswith("https://"):
             webbrowser.open(url)
+
+    def reload(self):
+        # load_html() resets the view to the top; put the reader back where
+        # they were so refreshing a long document doesn't lose their place.
+        scroll_fraction = self.html.yview()[0]
+        self._load()
+        self.update_idletasks()
+        self.yview_moveto(scroll_fraction)

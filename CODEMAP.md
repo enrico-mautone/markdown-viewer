@@ -33,7 +33,12 @@ markdownviewer/
                              select 1-based [select=0 in tkinterweb ritorna
                              sempre 0 match]; il cambio tab resetta la
                              ricerca per non lasciare un conteggio riferito
-                             alla tab precedente)
+                             alla tab precedente; barra con pulsante
+                             "Ricarica", F5/Ctrl+R e voce File > Ricarica:
+                             refresh_current_tab() ricarica la tab corrente
+                             e, se la find-bar è aperta con del testo,
+                             rilancia la ricerca sul contenuto nuovo — vedi
+                             docs/ricarica-documento.md)
     __main__.py              Permette `python -m markdownviewer`
     render.py                Funzioni pure: file .md -> HTML (markdown
                              lib con estensione tables + CSS incorporato,
@@ -82,6 +87,7 @@ markdownviewer/
   `docs/superpowers/plans/2026-09-24-markdown-viewer.md` per il piano di
   implementazione.
 - Vedi `docs/build-eseguibile.md` per come costruire l'eseguibile Windows.
+- Vedi `docs/ricarica-documento.md` per il ricarico manuale del documento.
 - La revisione finale (subagent fresco su tutto il branch, vedi ledger del
   piano) ha trovato e fatto correggere: immagini relative mai risolte su
   Windows (più il check di `manual_test/verify_tab.py` che lo dichiarava

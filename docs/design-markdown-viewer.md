@@ -45,6 +45,9 @@ Vedi [[CODEMAP]] per il dettaglio directory.
   incorporato (font leggibile, stile per code block, blockquote, immagini
   responsive). Il path base per le immagini relative è la cartella del file
   `.md` (`base_url` di tkinterweb).
+- **Ricarica manuale**: il pulsante "Ricarica" sotto il menu (o F5, Ctrl+R,
+  File → Ricarica) rilegge dal disco il file della tab corrente senza
+  riaprirlo; vedi [[ricarica-documento]].
 - **Link esterni**: click su un link `http(s)://` apre il browser di sistema
   via `webbrowser.open()`, non naviga dentro l'app.
 - **Errori**: file non trovato, non leggibile (permessi) o con encoding non
@@ -60,7 +63,8 @@ Vedi [[CODEMAP]] per il dettaglio directory.
 - Drag & drop, argomenti da riga di comando.
 - Task-list, strikethrough, syntax highlighting colorato nei code
   block.
-- Auto-reload se il file cambia su disco mentre è aperto.
+- Auto-reload automatico quando il file cambia su disco (esiste solo il
+  ricarico manuale, vedi [[ricarica-documento]]).
 - Packaging/installer (es. PyInstaller) — non richiesto in questa fase.
 
 ## Testing

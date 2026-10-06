@@ -41,11 +41,14 @@ class MarkdownViewerApp:
         self._tooltip_label: tk.Label | None = None
 
         self._build_menu()
+        self._build_toolbar()
         self._build_find_bar()
         self.notebook.bind("<<NotebookTabChanged>>", lambda _event: self._on_tab_changed())
         self.root.bind("<Control-o>", lambda _event: self.open_files())
         self.root.bind("<Control-w>", lambda _event: self.close_current_tab())
         self.root.bind("<Control-f>", lambda _event: self._open_find_bar())
+        self.root.bind("<F5>", lambda _event: self.refresh_current_tab())
+        self.root.bind("<Control-r>", lambda _event: self.refresh_current_tab())
 
     def _install_closable_tab_style(self):
         # Adds a "close" element to the tab layout (spec: bottone "x" sulla
@@ -96,6 +99,7 @@ class MarkdownViewerApp:
         menubar = tk.Menu(self.root)
         file_menu = tk.Menu(menubar, tearoff=False)
         file_menu.add_command(label="Apri file...", accelerator="Ctrl+O", command=self.open_files)
+        file_menu.add_command(label="Ricarica", accelerator="F5", command=self.refresh_current_tab)
         file_menu.add_command(label="Chiudi tab", accelerator="Ctrl+W", command=self.close_current_tab)
         file_menu.add_separator()
         file_menu.add_command(label="Esci", command=self.root.quit)
@@ -106,6 +110,24 @@ class MarkdownViewerApp:
         menubar.add_cascade(label="Modifica", menu=edit_menu)
 
         self.root.config(menu=menubar)
+
+    def _build_toolbar(self):
+        self._toolbar = ttk.Frame(self.root)
+        self._toolbar.pack(side="top", fill="x", before=self.notebook)
+        self._refresh_button = ttk.Button(
+            self._toolbar, text="⟳ Ricarica", command=self.refresh_current_tab
+        )
+        self._refresh_button.pack(side="left", padx=4, pady=2)
+
+    def refresh_current_tab(self):
+        tab = self._current_tab()
+        if tab is None:
+            return
+        tab.reload()
+        # Reloading replaces the page, so any highlights are gone: re-run an
+        # open search against the new content.
+        if self._find_bar.winfo_ismapped() and self._find_entry.get():
+            self._run_search(reset=True)
 
     def _build_find_bar(self):
         # Docked at the top of the window, hidden until Ctrl+F (spec:
