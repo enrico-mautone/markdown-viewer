@@ -8,6 +8,9 @@ code, pre { background: #f0f0f0; padding: 0.2em 0.4em; }
 pre { padding: 1em; overflow-x: auto; }
 blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 1em; color: #555; }
 img { max-width: 100%; }
+table { border-collapse: collapse; margin: 1em 0; }
+th, td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+th { background: #f0f0f0; }
 """
 
 
@@ -16,7 +19,7 @@ def markdown_to_html(markdown_text: str) -> str:
     # untrusted .md file could otherwise embed e.g. <meta http-equiv="refresh">
     # to open the system browser with no click, or <img>/<form> tags to
     # reach the network outside the markdown-image path.
-    converter = markdown.Markdown()
+    converter = markdown.Markdown(extensions=["tables"])
     converter.preprocessors.deregister("html_block")
     converter.inlinePatterns.deregister("html")
     body = converter.convert(markdown_text)

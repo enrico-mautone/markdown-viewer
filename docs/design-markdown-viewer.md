@@ -18,7 +18,7 @@ dell'applicazione.
 | Conversione MD→HTML | libreria `markdown` | — |
 | Multi-file | una tab per file (`ttk.Notebook`) | sidebar+area unica, finestre multiple |
 | Apertura file | solo dialog "Apri file" (Ctrl+O, multi-selezione) | drag&drop, argomenti CLI |
-| Scope Markdown | base (titoli, liste, grassetto/corsivo, link, immagini, code block senza syntax highlighting) | GitHub-flavored (tabelle, task-list, syntax highlighting colorato) |
+| Scope Markdown | base (titoli, liste, grassetto/corsivo, link, immagini, code block senza syntax highlighting) + tabelle (aggiunte dopo la v1, vedi [[tabelle-markdown]]) | GitHub-flavored completo (task-list, syntax highlighting colorato) |
 
 ## Architettura
 
@@ -58,7 +58,7 @@ Vedi [[CODEMAP]] per il dettaglio directory.
 - Salvataggio o modifica del file sorgente (nessuna area editabile in tutta
   l'app, per costruzione).
 - Drag & drop, argomenti da riga di comando.
-- Tabelle, task-list, strikethrough, syntax highlighting colorato nei code
+- Task-list, strikethrough, syntax highlighting colorato nei code
   block.
 - Auto-reload se il file cambia su disco mentre è aperto.
 - Packaging/installer (es. PyInstaller) — non richiesto in questa fase.
