@@ -59,3 +59,34 @@ def test_markdown_to_html_escapes_raw_html_instead_of_passing_it_through():
 
     assert "<meta" not in html
     assert "&lt;meta" in html
+
+
+TABLE_MD = """\
+| Nome | Ruolo |
+|------|-------|
+| Ada  | CTO   |
+| Bob  | Dev   |
+"""
+
+
+def test_markdown_to_html_renders_table_with_header_and_cells():
+    html = markdown_to_html(TABLE_MD)
+
+    assert "<table>" in html
+    assert "<th>Nome</th>" in html
+    assert "<td>Ada</td>" in html
+    assert "|" not in html.split("<body>")[1]
+
+
+def test_markdown_to_html_table_respects_column_alignment():
+    html = markdown_to_html("| A | B |\n|:--|--:|\n| 1 | 2 |\n")
+
+    assert "text-align: left" in html
+    assert "text-align: right" in html
+
+
+def test_markdown_to_html_table_cells_still_escape_raw_html():
+    html = markdown_to_html("| A |\n|---|\n| <script>x</script> |\n")
+
+    assert "<script>" not in html
+    assert "&lt;script&gt;" in html

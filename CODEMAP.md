@@ -31,7 +31,8 @@ markdownviewer/
                              alla tab precedente)
     __main__.py              Permette `python -m markdownviewer`
     render.py                Funzioni pure: file .md -> HTML (markdown
-                             lib + CSS incorporato), senza dipendenze da
+                             lib con estensione tables + CSS incorporato,
+                             vedi docs/tabelle-markdown.md), senza dipendenze da
                              Tk — testate in isolamento in tests/. Legge
                              i file con utf-8-sig (accetta anche BOM) e
                              disattiva l'HTML grezzo nella libreria
