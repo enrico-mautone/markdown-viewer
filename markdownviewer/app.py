@@ -1,7 +1,8 @@
 import re
+import sys
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
 
 from markdownviewer.tab import MarkdownTab
 
@@ -298,7 +299,24 @@ class MarkdownViewerApp:
             self._tooltip.withdraw()
 
 
-def main():
+def paths_from_argv(argv: list[str]) -> tuple[list[Path], list[str]]:
+    """Split command-line args into existing files and missing ones.
+
+    Windows launches the default app as `MarkdownViewer.exe "<file>"`.
+    """
+    found, missing = [], []
+    for arg in argv:
+        path = Path(arg)
+        (found if path.is_file() else missing).append(path.resolve() if path.is_file() else arg)
+    return found, missing
+
+
+def main(argv: list[str] | None = None):
+    found, missing = paths_from_argv(sys.argv[1:] if argv is None else argv)
     root = tk.Tk()
-    MarkdownViewerApp(root)
+    app = MarkdownViewerApp(root)
+    for path in found:
+        app._open_one(path)
+    if missing:
+        messagebox.showerror("File non trovato", chr(10).join(missing), parent=root)
     root.mainloop()
