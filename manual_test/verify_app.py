@@ -5,11 +5,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from markdownviewer.app import MarkdownViewerApp
+import tempfile as _tempfile
+
+RECENT_PATH = Path(_tempfile.mkdtemp()) / "recent.json"
 
 HERE = Path(__file__).resolve().parent
 
 root = tk.Tk()
-app = MarkdownViewerApp(root)
+app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 
 ok_path = (HERE / "sample-ok.md").resolve()
 image_path = (HERE / "sample-image.md").resolve()
@@ -59,7 +62,7 @@ def _find_x(notebook, wanted_element, max_x=300):
 
 # Tooltip shows the tab's full path (spec: "il tooltip il path completo")
 root = tk.Tk()
-app = MarkdownViewerApp(root)
+app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 app._open_one(ok_path)
 root.update()
 label_x = _find_x(app.notebook, "label")
@@ -76,7 +79,7 @@ root.destroy()
 
 # "x" close button actually closes the tab (spec: 'bottone "x" sulla tab')
 root = tk.Tk()
-app = MarkdownViewerApp(root)
+app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 app._open_one(ok_path)
 root.update()
 close_x = _find_x(app.notebook, "close")
@@ -95,7 +98,7 @@ search_path = (HERE / "sample-search.md").resolve()
 
 # Ctrl+F opens the find bar and focuses the entry
 root = tk.Tk()
-app = MarkdownViewerApp(root)
+app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 app._open_one(search_path)
 root.update()
 assert not app._find_bar.winfo_ismapped()
@@ -156,7 +159,7 @@ root.destroy()
 
 # Switching tabs resets the search (no stale count/highlight on the new tab)
 root = tk.Tk()
-app = MarkdownViewerApp(root)
+app = MarkdownViewerApp(root, recent_path=RECENT_PATH)
 app._open_one(search_path)
 app._open_one(image_path)
 root.update()

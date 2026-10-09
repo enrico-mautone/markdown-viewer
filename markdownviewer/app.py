@@ -3,6 +3,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, ttk
 
+from markdownviewer.recent import RecentFiles, default_recent_path
 from markdownviewer.tab import MarkdownTab
 
 
@@ -18,7 +19,7 @@ def _make_close_icon(background: str, mark: str) -> tk.PhotoImage:
 
 
 class MarkdownViewerApp:
-    def __init__(self, root: tk.Tk):
+    def __init__(self, root: tk.Tk, recent_path: Path | None = None):
         self.root = root
         self.root.title("Markdown Viewer")
         self.root.geometry("900x700")
@@ -40,12 +41,16 @@ class MarkdownViewerApp:
         self._tooltip: tk.Toplevel | None = None
         self._tooltip_label: tk.Label | None = None
 
+        self._recent = RecentFiles(recent_path or default_recent_path())
         self._build_menu()
+        self._build_toolbar()
         self._build_find_bar()
         self.notebook.bind("<<NotebookTabChanged>>", lambda _event: self._on_tab_changed())
         self.root.bind("<Control-o>", lambda _event: self.open_files())
         self.root.bind("<Control-w>", lambda _event: self.close_current_tab())
         self.root.bind("<Control-f>", lambda _event: self._open_find_bar())
+        self.root.bind("<F5>", lambda _event: self.refresh_current_tab())
+        self.root.bind("<Control-r>", lambda _event: self.refresh_current_tab())
 
     def _install_closable_tab_style(self):
         # Adds a "close" element to the tab layout (spec: bottone "x" sulla
@@ -96,16 +101,71 @@ class MarkdownViewerApp:
         menubar = tk.Menu(self.root)
         file_menu = tk.Menu(menubar, tearoff=False)
         file_menu.add_command(label="Apri file...", accelerator="Ctrl+O", command=self.open_files)
+        file_menu.add_command(label="Ricarica", accelerator="F5", command=self.refresh_current_tab)
         file_menu.add_command(label="Chiudi tab", accelerator="Ctrl+W", command=self.close_current_tab)
         file_menu.add_separator()
         file_menu.add_command(label="Esci", command=self.root.quit)
         menubar.add_cascade(label="File", menu=file_menu)
+
+        self._recent_menu = tk.Menu(menubar, tearoff=False)
+        menubar.add_cascade(label="Recenti", menu=self._recent_menu)
+        self._refresh_recent_menu()
 
         edit_menu = tk.Menu(menubar, tearoff=False)
         edit_menu.add_command(label="Trova...", accelerator="Ctrl+F", command=self._open_find_bar)
         menubar.add_cascade(label="Modifica", menu=edit_menu)
 
         self.root.config(menu=menubar)
+
+    def _remember(self, path: Path):
+        # Only files that exist: a path that fails to open must not linger in
+        # the list and keep producing error tabs.
+        if path.is_file():
+            self._recent.add(path)
+            self._refresh_recent_menu()
+
+    def _refresh_recent_menu(self):
+        menu = self._recent_menu
+        menu.delete(0, "end")
+        recent = self._recent.paths
+        if not recent:
+            menu.add_command(label="(nessun file recente)", state="disabled")
+            return
+        for number, path in enumerate(recent, start=1):
+            menu.add_command(
+                label=f"{number}. {path.name}  ({path.parent})",
+                command=lambda target=path: self._open_recent(target),
+            )
+        menu.add_separator()
+        menu.add_command(label="Svuota elenco", command=self._clear_recent)
+
+    def _open_recent(self, path: Path):
+        if not path.is_file():
+            self._recent.remove(path)
+            self._refresh_recent_menu()
+        self._open_one(path)
+
+    def _clear_recent(self):
+        self._recent.clear()
+        self._refresh_recent_menu()
+
+    def _build_toolbar(self):
+        self._toolbar = ttk.Frame(self.root)
+        self._toolbar.pack(side="top", fill="x", before=self.notebook)
+        self._refresh_button = ttk.Button(
+            self._toolbar, text="⟳ Ricarica", command=self.refresh_current_tab
+        )
+        self._refresh_button.pack(side="left", padx=4, pady=2)
+
+    def refresh_current_tab(self):
+        tab = self._current_tab()
+        if tab is None:
+            return
+        tab.reload()
+        # Reloading replaces the page, so any highlights are gone: re-run an
+        # open search against the new content.
+        if self._find_bar.winfo_ismapped() and self._find_entry.get():
+            self._run_search(reset=True)
 
     def _build_find_bar(self):
         # Docked at the top of the window, hidden until Ctrl+F (spec:
@@ -226,6 +286,7 @@ class MarkdownViewerApp:
             self._open_one(Path(raw_path).resolve())
 
     def _open_one(self, path: Path):
+        self._remember(path)
         if path in self._open_paths:
             self.notebook.select(self._open_paths[path])
             return

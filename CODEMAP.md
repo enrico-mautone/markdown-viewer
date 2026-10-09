@@ -33,7 +33,14 @@ markdownviewer/
                              select 1-based [select=0 in tkinterweb ritorna
                              sempre 0 match]; il cambio tab resetta la
                              ricerca per non lasciare un conteggio riferito
-                             alla tab precedente)
+                             alla tab precedente; barra con pulsante
+                             "Ricarica", F5/Ctrl+R e voce File > Ricarica:
+                             refresh_current_tab() ricarica la tab corrente
+                             e, se la find-bar è aperta con del testo,
+                             rilancia la ricerca sul contenuto nuovo — vedi
+                             docs/ricarica-documento.md; menu "Recenti" tra File e Modifica con gli
+                             ultimi 10 file aperti, voci cliccabili, "Svuota
+                             elenco" — vedi docs/file-recenti.md)
     __main__.py              Permette `python -m markdownviewer`
     render.py                Funzioni pure: file .md -> HTML (markdown
                              lib con estensione tables + CSS incorporato,
@@ -46,6 +53,13 @@ markdownviewer/
                              non può aprire il browser di sistema o
                              caricare risorse remote senza un click
                              dell'utente
+    recent.py                 RecentFiles: elenco circolare degli ultimi 10
+                             file aperti (il piu' recente in cima, un file
+                             riaperto sale in cima), salvato come JSON in
+                             %APPDATA%\MarkdownViewer\recent.json. Logica
+                             pura senza Tk; file di stato mancante, corrotto
+                             o non scrivibile non causa errori (avviso nel
+                             log). E' l'unico file che l'app scrive
     tab.py                    MarkdownTab, wrapper attorno a un HtmlFrame
                              di tkinterweb per una singola tab: rendering,
                              messaggio d'errore se il file non è
@@ -61,6 +75,9 @@ markdownviewer/
     __init__.py
     test_render.py           Test su conversione md -> html e lettura
                              file (nessun test GUI automatizzato)
+    test_recent.py           Test su RecentFiles: ordine, circolarità a 10,
+                             persistenza, file di stato corrotto o non
+                             scrivibile
   manual_test/                Script di verifica manuale/smoke per le
                              parti GUI (tab.py, app.py) non coperte da
                              pytest — file di esempio + script eseguibili
@@ -82,6 +99,9 @@ markdownviewer/
   `docs/superpowers/plans/2026-09-24-markdown-viewer.md` per il piano di
   implementazione.
 - Vedi `docs/build-eseguibile.md` per come costruire l'eseguibile Windows.
+- Vedi `docs/ricarica-documento.md` per il ricarico manuale del documento.
+- Vedi `docs/file-recenti.md` per il menu "Recenti". L'unico file scritto
+  dall'app è il suo stato (`recent.json`), mai i `.md` aperti.
 - La revisione finale (subagent fresco su tutto il branch, vedi ledger del
   piano) ha trovato e fatto correggere: immagini relative mai risolte su
   Windows (più il check di `manual_test/verify_tab.py` che lo dichiarava
